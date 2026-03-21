@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alpine Rental Landing Page</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --alpine-blue: #2d92ff;
+      --alpine-blue-deep: #116cc6;
+      --snow-white: #f8fcff;
+      --accent-orange: #ff7f2a;
+      --text-dark: #0f1a28;
+      --frost: rgba(240, 248, 255, 0.35);
+      --frost-border: rgba(255, 255, 255, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      color: var(--text-dark);
+      background: linear-gradient(180deg, #58abff 0%, #e2f2ff 22%, #d6ebfa 100%);
+      overflow-x: hidden;
+    }
+
+    .site {
+      position: relative;
+      min-height: 100vh;
+      isolation: isolate;
+    }
+
+    .bg-slope {
+      position: fixed;
+      inset: 0;
+      z-index: -3;
+      background-image:
+        radial-gradient(circle at 85% 14%, rgba(255,255,255,.9) 0%, rgba(255,255,255,0) 28%),
+        linear-gradient(180deg, rgba(68, 165, 255, 0.95) 0%, rgba(162, 214, 255, 0.86) 16%, rgba(226, 243, 255, 0.9) 35%, rgba(232, 244, 252, 0.96) 100%),
+        url('https://images.unsplash.com/photo-1483683804023-6ccdb62f86ef?auto=format&fit=crop&w=2600&q=80');
+      background-size: cover, cover, cover;
+      background-position: center top, center, center;
+      filter: saturate(1.05) contrast(1.03);
+    }
+
+    .bg-slope::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        repeating-linear-gradient(160deg, rgba(255,255,255,0.10) 0 2px, rgba(255,255,255,0.00) 2px 48px),
+        radial-gradient(circle at 22% 70%, rgba(255,255,255,.4), rgba(255,255,255,0) 38%),
+        radial-gradient(circle at 74% 54%, rgba(255,255,255,.33), rgba(255,255,255,0) 34%);
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    .snow-particles {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle, rgba(255,255,255,.55) 1px, transparent 2px),
+        radial-gradient(circle, rgba(255,255,255,.35) 1px, transparent 2px);
+      background-size: 120px 120px, 160px 160px;
+      background-position: 0 0, 45px 80px;
+      animation: drift 18s linear infinite;
+    }
+
+    @keyframes drift {
+      from { transform: translateY(-20px); }
+      to { transform: translateY(40px); }
+    }
+
+    .chairlift {
+      position: fixed;
+      right: -20px;
+      top: 10vh;
+      width: min(26vw, 340px);
+      height: 70vh;
+      z-index: -1;
+      background: linear-gradient(180deg, rgba(51,78,108,0.65), rgba(28,45,66,0.18));
+      clip-path: polygon(72% 0, 78% 0, 35% 100%, 29% 100%);
+      opacity: .65;
+    }
+
+    .chairlift::before,
+    .chairlift::after {
+      content: "";
+      position: absolute;
+      right: 10%;
+      width: 55%;
+      border: 2px solid rgba(25, 44, 65, 0.6);
+      border-top: 0;
+      border-radius: 0 0 16px 16px;
+      height: 34px;
+      transform: skewY(-35deg);
+    }
+
+    .chairlift::before { top: 25%; }
+    .chairlift::after { top: 46%; }
+
+    .top-nav {
+      position: sticky;
+      top: 12px;
+      margin: 12px auto 0;
+      width: min(1000px, calc(100% - 24px));
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px;
+      border-radius: 999px;
+      background: var(--frost);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--frost-border);
+      box-shadow: 0 8px 24px rgba(9, 39, 72, 0.14);
+      z-index: 50;
+    }
+
+    .top-nav a {
+      text-decoration: none;
+      color: #f5fbff;
+      font-size: .78rem;
+      letter-spacing: .02em;
+      background: rgba(19, 85, 154, 0.48);
+      border: 1px solid rgba(255,255,255,.25);
+      padding: 8px 12px;
+      border-radius: 999px;
+      transition: .2s ease;
+    }
+
+    .top-nav a:hover { background: rgba(19,85,154,.76); transform: translateY(-1px); }
+
+    .hero {
+      min-height: 88vh;
+      display: grid;
+      align-items: center;
+      padding: 6rem 1.25rem 3rem;
+    }
+
+    .hero-panel {
+      width: min(880px, 92vw);
+      margin: 0 auto;
+      padding: clamp(1.2rem, 3vw, 2rem);
+      border-radius: 26px;
+      background: linear-gradient(145deg, rgba(234,246,255,.45), rgba(220,240,255,.16));
+      backdrop-filter: blur(4px);
+      border: 1px solid rgba(255,255,255,.5);
+      box-shadow: 0 24px 52px rgba(11, 42, 76, .18);
+    }
+
+    h1, h2 {
+      font-family: 'Barlow Condensed', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: .02em;
+      line-height: .94;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: clamp(2.2rem, 7.5vw, 5.1rem);
+      color: #fafdff;
+      text-shadow: 0 10px 26px rgba(7, 33, 61, 0.28);
+      max-width: 13ch;
+    }
+
+    .hero p {
+      color: #f3f8fd;
+      max-width: 50ch;
+      font-size: clamp(.95rem, 2vw, 1.25rem);
+      margin: 1rem 0 1.3rem;
+      text-shadow: 0 6px 18px rgba(0, 24, 48, .24);
+    }
+
+    .cta {
+      display: inline-block;
+      background: var(--accent-orange);
+      color: white;
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: .85rem 1.25rem;
+      font-size: .8rem;
+      letter-spacing: .05em;
+      box-shadow: 0 10px 20px rgba(255, 127, 42, .4);
+    }
+
+    .content {
+      width: min(1120px, 96vw);
+      margin: 0 auto;
+      display: grid;
+      gap: 3.25rem;
+      padding-bottom: 3rem;
+    }
+
+    .section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      align-items: center;
+    }
+
+    .section.reverse { grid-template-columns: 1fr 1fr; }
+
+    .panel {
+      padding: 1.35rem;
+      border-radius: 18px;
+      background: rgba(245, 252, 255, 0.45);
+      border: 1px solid rgba(255,255,255,.62);
+      backdrop-filter: blur(3px);
+      box-shadow: 0 12px 24px rgba(20, 53, 86, 0.14);
+    }
+
+    .section h2 {
+      font-size: clamp(1.8rem, 4.2vw, 3rem);
+      color: #0f1d2f;
+      margin-bottom: 1rem;
+    }
+
+    .section h2 .accent { color: var(--accent-orange); }
+
+    .section p {
+      margin: 0 0 1rem;
+      color: #1a2a3d;
+      line-height: 1.5;
+      font-size: 1rem;
+    }
+
+    .photo {
+      width: 100%;
+      min-height: 360px;
+      border-radius: 18px;
+      background-size: cover;
+      background-position: center;
+      border: 1px solid rgba(255,255,255,.7);
+      box-shadow: 0 18px 30px rgba(12, 39, 68, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .photo::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(12deg, rgba(255,255,255,.32), rgba(255,255,255,0));
+    }
+
+    .skier {
+      background-image: url('https://images.unsplash.com/photo-1533468432432-9d2f9f211d24?auto=format&fit=crop&w=1600&q=80');
+      background-position: center 30%;
+    }
+
+    .snowboard {
+      background-image: url('https://images.unsplash.com/photo-1551698618-1dfe5d97d256?auto=format&fit=crop&w=1600&q=80');
+      background-position: center;
+    }
+
+    .kids-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1.3fr 1fr;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .kids {
+      min-height: 260px;
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.7);
+      background-size: cover;
+      background-position: center;
+      box-shadow: 0 14px 24px rgba(10, 31, 55, .18);
+    }
+
+    .kids.left {
+      background-image: url('https://images.unsplash.com/photo-1517292987719-0369a794ec0f?auto=format&fit=crop&w=900&q=80');
+    }
+
+    .kids.right {
+      background-image: url('https://images.unsplash.com/photo-1517948430535-1e2464206978?auto=format&fit=crop&w=900&q=80');
+    }
+
+    .center-copy {
+      text-align: center;
+    }
+
+    .center-copy h2 { margin-bottom: .65rem; }
+
+    footer {
+      width: min(1100px, 96vw);
+      margin: 2rem auto 1.5rem;
+      padding: 1.4rem 0 0.4rem;
+      border-top: 1px solid rgba(14, 45, 72, 0.2);
+      color: #1d3550;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: .65rem 1rem;
+      font-size: .92rem;
+    }
+
+    .footer-links,
+    .social {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .footer-links a,
+    .social a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    @media (max-width: 860px) {
+      .section,
+      .section.reverse,
+      .kids-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .top-nav {
+        justify-content: flex-start;
+        overflow-x: auto;
+      }
+
+      .photo,
+      .kids { min-height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="site">
+    <div class="bg-slope" aria-hidden="true"></div>
+    <div class="snow-particles" aria-hidden="true"></div>
+    <div class="chairlift" aria-hidden="true"></div>
+
+    <nav class="top-nav">
+      <a href="#">Home</a>
+      <a href="#">Our Equipment</a>
+      <a href="#">Family Packages</a>
+      <a href="#">Locations</a>
+      <a href="#">Contact</a>
+    </nav>
+
+    <header class="hero">
+      <div class="hero-panel">
+        <h1>Gear Up for Your Alpine Adventure</h1>
+        <p>Premium Ski &amp; Snowboard Rentals for the Whole Family – Delivered to Your Resort</p>
+        <a class="cta" href="#equipment">VIEW EQUIPMENT</a>
+      </div>
+    </header>
+
+    <main id="equipment" class="content">
+      <section class="section">
+        <div class="panel">
+          <h2>Performance <span class="accent">Skis</span> for Beginners &amp; Pros</h2>
+          <p>High-performance skis and poles, precision tuned daily for smooth control on every slope. From first-turn beginners to expert carvers, we match each rider with ideal flex, profile, and edge setup.</p>
+          <a href="#" class="cta">VIEW EQUIPMENT</a>
+        </div>
+        <div class="photo skier" role="img" aria-label="Happy adult male skier with motion and snow spray"></div>
+      </section>
+
+      <section class="section reverse">
+        <div class="photo snowboard" role="img" aria-label="Happy adult male snowboarder in dynamic carving pose"></div>
+        <div class="panel">
+          <h2>Try Something New! <span class="accent">Snowboard</span> Fun</h2>
+          <p>Explore modern snowboard packages with responsive decks, supportive boots, and all-mountain bindings. Whether you’re learning switch turns or sending side hits, we’ve got setups built for confidence and progression.</p>
+          <a href="#" class="cta">View Snowboards</a>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="center-copy">
+          <h2>Sledges for the Youngest &amp; Bravest</h2>
+          <p>Safe, fun equipment for children featuring low-center sledges, insulated helmets, and secure fit gear so every little rider can laugh their way down the snow.</p>
+          <a href="#" class="cta">View Sledges</a>
+        </div>
+        <div class="kids-wrap" style="margin-top: 1rem;">
+          <div class="kids left" role="img" aria-label="Joyful child in colorful snowsuit sledging left"></div>
+          <div></div>
+          <div class="kids right" role="img" aria-label="Joyful child in colorful snowsuit sledging right"></div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-links">
+          <a href="#">FAQ</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Rental Policies</a>
+        </div>
+        <div class="social" aria-label="Social media links">
+          <a href="#" aria-label="Facebook">◉ Facebook</a>
+          <a href="#" aria-label="Instagram">◉ Instagram</a>
+          <a href="#" aria-label="Twitter">◉ Twitter</a>
+        </div>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>
